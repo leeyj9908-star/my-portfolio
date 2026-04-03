@@ -17,6 +17,29 @@ import { supabase } from '../../utils/supabase';
 
 const THUMB_BASE = 'https://image.thum.io/get/width/600/crop/338/';
 
+const FALLBACK_PROJECTS = [
+  {
+    id: 1,
+    title: 'ARTSPACE',
+    description: '아티스트를 위한 공간 대여 플랫폼. 갤러리·스튜디오·야외 공간을 검색하고 예약할 수 있는 모바일 웹앱.',
+    url: 'https://leeyj9908-star.github.io/artspace/',
+    github_url: 'https://github.com/leeyj9908-star/artspace',
+    tech_stack: ['Next.js', 'TypeScript', 'Supabase', 'GitHub Pages'],
+    order_index: 1,
+    is_featured: true,
+  },
+  {
+    id: 2,
+    title: 'my-portfolio',
+    description: '개인 포트폴리오 웹사이트. 프로젝트 소개, 기술 스택, 방명록 기능을 포함한 SPA.',
+    url: 'https://leeyj9908-star.github.io/my-portfolio/',
+    github_url: 'https://github.com/leeyj9908-star/my-portfolio',
+    tech_stack: ['React', 'MUI', 'Supabase', 'Vite'],
+    order_index: 2,
+    is_featured: true,
+  },
+];
+
 function FeaturedCard({ project }) {
   const [imgError, setImgError] = useState(false);
   const thumbUrl = project.url ? `${THUMB_BASE}${project.url}` : null;
@@ -87,13 +110,7 @@ function ProjectsSection() {
       if (!error && data && data.length > 0) {
         setFeatured(data);
       } else {
-        // featured가 없으면 최신 3개
-        const { data: all } = await supabase
-          .from('projects')
-          .select('*')
-          .order('order_index', { ascending: true })
-          .limit(3);
-        if (all) setFeatured(all);
+        setFeatured(FALLBACK_PROJECTS);
       }
       setLoading(false);
     };
