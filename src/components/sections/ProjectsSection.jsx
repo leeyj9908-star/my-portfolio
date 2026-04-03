@@ -25,6 +25,7 @@ const FALLBACK_PROJECTS = [
     url: 'https://leeyj9908-star.github.io/artspace/',
     github_url: 'https://github.com/leeyj9908-star/artspace',
     tech_stack: ['Next.js', 'TypeScript', 'Supabase', 'GitHub Pages'],
+    thumbnail: 'https://picsum.photos/seed/artspace-gallery/600/338',
     order_index: 1,
     is_featured: true,
   },
@@ -35,57 +36,67 @@ const FALLBACK_PROJECTS = [
     url: 'https://leeyj9908-star.github.io/my-portfolio/',
     github_url: 'https://github.com/leeyj9908-star/my-portfolio',
     tech_stack: ['React', 'MUI', 'Supabase', 'Vite'],
+    thumbnail: 'https://picsum.photos/seed/portfolio-web/600/338',
     order_index: 2,
     is_featured: true,
   },
 ];
 
+const CARD_HEIGHT = 340;
+const IMG_HEIGHT = 168;
+
 function FeaturedCard({ project }) {
+  const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
-  const thumbUrl = project.url ? `${THUMB_BASE}${project.url}` : null;
+  const thumbUrl = project.thumbnail || (project.url ? `${THUMB_BASE}${project.url}` : null);
 
   return (
     <Card
       sx={{
-        height: '100%',
+        height: CARD_HEIGHT,
         display: 'flex',
         flexDirection: 'column',
         borderRadius: 3,
         border: '1px solid',
         borderColor: 'divider',
         boxShadow: 'none',
+        overflow: 'hidden',
         transition: 'box-shadow 0.25s ease, transform 0.25s ease',
         '&:hover': {
-          boxShadow: '0 8px 32px rgba(139,115,85,0.18)',
+          boxShadow: '0 8px 32px rgba(139,115,85,0.2)',
           transform: 'translateY(-4px)',
         },
       }}
     >
-      <Box sx={{ position: 'relative', paddingTop: '56.25%', bgcolor: 'action.hover', overflow: 'hidden' }}>
+      <Box sx={{ position: 'relative', height: IMG_HEIGHT, flexShrink: 0, bgcolor: 'action.hover' }}>
+        {!imgLoaded && !imgError && (
+          <Skeleton variant="rectangular" width="100%" height={IMG_HEIGHT} sx={{ position: 'absolute', top: 0, left: 0 }} />
+        )}
         {thumbUrl && !imgError ? (
           <CardMedia
             component="img"
             image={thumbUrl}
             alt={project.title}
+            onLoad={() => setImgLoaded(true)}
             onError={() => setImgError(true)}
-            sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+            sx={{ width: '100%', height: IMG_HEIGHT, objectFit: 'cover', display: imgLoaded ? 'block' : 'none' }}
           />
-        ) : (
-          <Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'action.selected' }}>
+        ) : imgError ? (
+          <Box sx={{ width: '100%', height: IMG_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'action.selected' }}>
             <Typography variant="caption" color="text.disabled">No Preview</Typography>
           </Box>
-        )}
+        ) : null}
       </Box>
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Typography variant="h6" fontWeight={700} gutterBottom noWrap>
+      <CardContent sx={{ flexGrow: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <Typography variant="subtitle1" fontWeight={700} noWrap sx={{ mb: 0.5 }}>
           {project.title}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', height: '3em', lineHeight: 1.5 }}>
           {project.description}
         </Typography>
-        <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+        <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap sx={{ overflow: 'hidden', maxHeight: 44 }}>
           {(project.tech_stack || []).slice(0, 4).map((tech) => (
-            <Chip key={tech} label={tech} size="small" sx={{ fontSize: '0.7rem', height: 22, bgcolor: 'secondary.light', fontWeight: 500, mb: 0.5 }} />
+            <Chip key={tech} label={tech} size="small" sx={{ fontSize: '0.68rem', height: 20, bgcolor: 'secondary.light', fontWeight: 500, mb: 0.5 }} />
           ))}
         </Stack>
       </CardContent>
@@ -151,7 +162,7 @@ function ProjectsSection() {
                 </Grid>
               )
             : featured.map((project) => (
-                <Grid item xs={12} sm={6} md={4} key={project.id}>
+                <Grid item xs={12} sm={6} md={4} key={project.id} sx={{ display: 'flex' }}>
                   <FeaturedCard project={project} />
                 </Grid>
               ))}
