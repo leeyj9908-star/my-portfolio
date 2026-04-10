@@ -1,32 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Chip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Button,
-  CircularProgress,
-} from '@mui/material';
-import LockIcon from '@mui/icons-material/Lock';
 import { supabase } from '../../utils/supabase';
 
-/**
- * GuestbookList 컴포넌트
- * Supabase에서 방명록 목록을 불러와 표시합니다.
- * 비공개 항목은 비밀번호 입력 후 열람 가능합니다.
- *
- * Props:
- * @param {number} refreshKey - 값이 변경될 때마다 목록을 재조회합니다 [Optional, 기본값: 0]
- *
- * Example usage:
- * <GuestbookList refreshKey={refreshKey} />
- */
 function GuestbookList({ refreshKey = 0 }) {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -45,17 +19,12 @@ function GuestbookList({ refreshKey = 0 }) {
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchEntries();
-  }, [refreshKey]);
+  useEffect(() => { fetchEntries(); }, [refreshKey]);
 
   const formatDate = (dateStr) =>
     new Date(dateStr).toLocaleString('ko-KR', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit',
     });
 
   const revealKey = (entryId, field) => `${entryId}_${field}`;
@@ -66,16 +35,11 @@ function GuestbookList({ refreshKey = 0 }) {
     setPasswordError(false);
   };
 
-  const handleDialogClose = () => {
-    setDialog({ open: false, entryId: null, field: null });
-  };
+  const handleDialogClose = () => setDialog({ open: false, entryId: null, field: null });
 
   const handlePasswordSubmit = () => {
     if (passwordInput === '1234') {
-      setRevealed((prev) => ({
-        ...prev,
-        [revealKey(dialog.entryId, dialog.field)]: true,
-      }));
+      setRevealed((prev) => ({ ...prev, [revealKey(dialog.entryId, dialog.field)]: true }));
       handleDialogClose();
     } else {
       setPasswordError(true);
@@ -83,116 +47,88 @@ function GuestbookList({ refreshKey = 0 }) {
   };
 
   return (
-    <Box>
-      <Typography variant='h6' fontWeight={700} gutterBottom>
+    <div>
+      <h3 className="text-lg font-bold text-base-content mb-4">
         방명록 목록 ({entries.length}개)
-      </Typography>
+      </h3>
 
       {loading && (
-        <Box sx={{ textAlign: 'center', py: 4 }}>
-          <CircularProgress />
-        </Box>
+        <div className="flex justify-center py-8">
+          <span className="loading loading-spinner loading-md text-secondary" />
+        </div>
       )}
 
       {!loading && entries.length === 0 && (
-        <Typography variant='body2' color='text.secondary' sx={{ py: 2 }}>
+        <p className="text-base-content/40 text-sm py-4">
           아직 방명록이 없습니다. 첫 번째로 남겨보세요!
-        </Typography>
+        </p>
       )}
 
       {entries.map((entry) => (
-        <Card key={entry.id} sx={{ mb: 2 }} elevation={1}>
-          <CardContent>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                mb: 1,
-              }}
-            >
-              <Typography fontWeight={700}>{entry.name || '익명'}</Typography>
-              <Typography variant='caption' color='text.secondary'>
-                {formatDate(entry.created_at)}
-              </Typography>
-            </Box>
-
-            <Typography variant='body1' sx={{ mb: 1.5, whiteSpace: 'pre-wrap' }}>
-              {entry.content}
-            </Typography>
-
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              {entry.affiliation && (
-                entry.is_affiliation_public ||
-                revealed[revealKey(entry.id, 'affiliation')] ? (
-                  <Chip label={entry.affiliation} size='small' variant='outlined' />
-                ) : (
-                  <Chip
-                    icon={<LockIcon />}
-                    label='소속/직업 비공개'
-                    size='small'
-                    variant='outlined'
-                    onClick={() => handleLockClick(entry.id, 'affiliation')}
-                    sx={{ cursor: 'pointer' }}
-                  />
-                )
-              )}
-
-              {entry.contact_info && (
-                entry.is_contact_public ||
-                revealed[revealKey(entry.id, 'contact')] ? (
-                  <Chip
-                    label={entry.contact_info}
-                    size='small'
-                    variant='outlined'
-                    color='primary'
-                  />
-                ) : (
-                  <Chip
-                    icon={<LockIcon />}
-                    label='연락처 비공개'
-                    size='small'
-                    variant='outlined'
-                    color='primary'
-                    onClick={() => handleLockClick(entry.id, 'contact')}
-                    sx={{ cursor: 'pointer' }}
-                  />
-                )
-              )}
-            </Box>
-          </CardContent>
-        </Card>
+        <div key={entry.id} className="card bg-base-200 border border-white/10 mb-3 p-4">
+          <div className="flex justify-between items-start mb-2">
+            <span className="font-bold text-sm text-base-content">{entry.name || '익명'}</span>
+            <span className="text-xs text-base-content/40">{formatDate(entry.created_at)}</span>
+          </div>
+          <p className="text-sm text-base-content/80 whitespace-pre-wrap mb-3">{entry.content}</p>
+          <div className="flex flex-wrap gap-2">
+            {entry.affiliation && (
+              entry.is_affiliation_public || revealed[revealKey(entry.id, 'affiliation')] ? (
+                <span className="badge badge-outline badge-sm border-white/20">{entry.affiliation}</span>
+              ) : (
+                <button
+                  onClick={() => handleLockClick(entry.id, 'affiliation')}
+                  className="badge badge-outline badge-sm border-white/20 text-base-content/40 cursor-pointer hover:border-primary/40"
+                >
+                  🔒 소속/직업 비공개
+                </button>
+              )
+            )}
+            {entry.contact_info && (
+              entry.is_contact_public || revealed[revealKey(entry.id, 'contact')] ? (
+                <span className="badge badge-secondary badge-outline badge-sm">{entry.contact_info}</span>
+              ) : (
+                <button
+                  onClick={() => handleLockClick(entry.id, 'contact')}
+                  className="badge badge-secondary badge-outline badge-sm cursor-pointer opacity-40 hover:opacity-100"
+                >
+                  🔒 연락처 비공개
+                </button>
+              )
+            )}
+          </div>
+        </div>
       ))}
 
-      <Dialog open={dialog.open} onClose={handleDialogClose} maxWidth='xs' fullWidth>
-        <DialogTitle>비공개 정보 확인</DialogTitle>
-        <DialogContent>
-          <Typography variant='body2' color='text.secondary' sx={{ mb: 2 }}>
-            비밀번호를 입력하면 비공개 정보를 확인할 수 있습니다.
-          </Typography>
-          <TextField
-            fullWidth
-            type='password'
-            label='비밀번호'
-            value={passwordInput}
-            onChange={(e) => {
-              setPasswordInput(e.target.value);
-              setPasswordError(false);
-            }}
-            error={passwordError}
-            helperText={passwordError ? '비밀번호가 틀렸습니다.' : ''}
-            onKeyDown={(e) => e.key === 'Enter' && handlePasswordSubmit()}
-            autoFocus
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose}>취소</Button>
-          <Button variant='contained' onClick={handlePasswordSubmit}>
-            확인
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+      {/* Password Dialog */}
+      {dialog.open && (
+        <div className="modal modal-open">
+          <div className="modal-box bg-base-200 border border-white/10">
+            <h3 className="font-bold text-lg mb-2">비공개 정보 확인</h3>
+            <p className="text-sm text-base-content/60 mb-4">
+              비밀번호를 입력하면 비공개 정보를 확인할 수 있습니다.
+            </p>
+            <input
+              type="password"
+              className={`input input-bordered w-full bg-base-300 border-white/10 text-base-content ${passwordError ? 'input-error' : ''}`}
+              placeholder="비밀번호"
+              value={passwordInput}
+              onChange={(e) => { setPasswordInput(e.target.value); setPasswordError(false); }}
+              onKeyDown={(e) => e.key === 'Enter' && handlePasswordSubmit()}
+              autoFocus
+            />
+            {passwordError && (
+              <p className="text-error text-xs mt-1">비밀번호가 틀렸습니다.</p>
+            )}
+            <div className="modal-action mt-4">
+              <button className="btn btn-ghost btn-sm" onClick={handleDialogClose}>취소</button>
+              <button className="btn btn-primary btn-sm" onClick={handlePasswordSubmit}>확인</button>
+            </div>
+          </div>
+          <div className="modal-backdrop" onClick={handleDialogClose} />
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -1,17 +1,4 @@
 import { useState, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  Chip,
-  Button,
-  Skeleton,
-  Stack,
-} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabase';
 
@@ -35,15 +22,12 @@ const FALLBACK_PROJECTS = [
     description: '개인 포트폴리오 웹사이트. 프로젝트 소개, 기술 스택, 방명록 기능을 포함한 SPA.',
     url: 'https://leeyj9908-star.github.io/my-portfolio/',
     github_url: 'https://github.com/leeyj9908-star/my-portfolio',
-    tech_stack: ['React', 'MUI', 'Supabase', 'Vite'],
+    tech_stack: ['React', 'daisyUI', 'Supabase', 'Vite'],
     thumbnail: 'https://picsum.photos/seed/portfolio-web/600/338',
     order_index: 2,
     is_featured: true,
   },
 ];
-
-const CARD_HEIGHT = 340;
-const IMG_HEIGHT = 168;
 
 function FeaturedCard({ project }) {
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -51,56 +35,39 @@ function FeaturedCard({ project }) {
   const thumbUrl = project.thumbnail || (project.url ? `${THUMB_BASE}${project.url}` : null);
 
   return (
-    <Card
-      sx={{
-        height: CARD_HEIGHT,
-        display: 'flex',
-        flexDirection: 'column',
-        borderRadius: 3,
-        border: '1px solid',
-        borderColor: 'divider',
-        boxShadow: 'none',
-        overflow: 'hidden',
-        transition: 'box-shadow 0.25s ease, transform 0.25s ease',
-        '&:hover': {
-          boxShadow: '0 8px 32px rgba(106,168,212,0.2)',
-          transform: 'translateY(-4px)',
-        },
-      }}
-    >
-      <Box sx={{ position: 'relative', height: IMG_HEIGHT, flexShrink: 0, bgcolor: 'action.hover' }}>
+    <div className="card bg-base-200 border border-white/10 hover:-translate-y-1 hover:border-secondary/40 transition-all duration-300 overflow-hidden h-[340px] flex flex-col">
+      {/* Thumbnail */}
+      <div className="relative h-[168px] flex-shrink-0 bg-base-300">
         {!imgLoaded && !imgError && (
-          <Skeleton variant="rectangular" width="100%" height={IMG_HEIGHT} sx={{ position: 'absolute', top: 0, left: 0 }} />
+          <div className="skeleton w-full h-full absolute inset-0" />
         )}
         {thumbUrl && !imgError ? (
-          <CardMedia
-            component="img"
-            image={thumbUrl}
+          <img
+            src={thumbUrl}
             alt={project.title}
             onLoad={() => setImgLoaded(true)}
             onError={() => setImgError(true)}
-            sx={{ width: '100%', height: IMG_HEIGHT, objectFit: 'cover', display: imgLoaded ? 'block' : 'none' }}
+            className={`w-full h-full object-cover ${imgLoaded ? 'block' : 'hidden'}`}
           />
         ) : imgError ? (
-          <Box sx={{ width: '100%', height: IMG_HEIGHT, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'action.selected' }}>
-            <Typography variant="caption" color="text.disabled">No Preview</Typography>
-          </Box>
+          <div className="w-full h-full flex items-center justify-center text-base-content/30 text-sm">
+            No Preview
+          </div>
         ) : null}
-      </Box>
-      <CardContent sx={{ flexGrow: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="subtitle1" fontWeight={700} noWrap sx={{ mb: 0.5 }}>
-          {project.title}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', height: '3em', lineHeight: 1.5 }}>
-          {project.description}
-        </Typography>
-        <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap sx={{ overflow: 'hidden', maxHeight: 44 }}>
+      </div>
+      {/* Content */}
+      <div className="card-body p-4 flex flex-col flex-1 overflow-hidden">
+        <h3 className="card-title text-sm font-bold text-base-content truncate">{project.title}</h3>
+        <p className="text-xs text-base-content/50 line-clamp-2 mb-2">{project.description}</p>
+        <div className="flex flex-wrap gap-1 overflow-hidden max-h-[40px]">
           {(project.tech_stack || []).slice(0, 4).map((tech) => (
-            <Chip key={tech} label={tech} size="small" sx={{ fontSize: '0.68rem', height: 20, bgcolor: 'secondary.light', fontWeight: 500, mb: 0.5 }} />
+            <span key={tech} className="badge badge-outline badge-xs text-secondary border-secondary/30">
+              {tech}
+            </span>
           ))}
-        </Stack>
-      </CardContent>
-    </Card>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -125,61 +92,46 @@ function ProjectsSection() {
       }
       setLoading(false);
     };
-
     fetchFeatured();
   }, []);
 
   return (
-    <Box sx={{ bgcolor: 'background.paper', py: { xs: 6, md: 10 } }}>
-      <Container maxWidth="lg">
-        <Typography variant="h4" fontWeight={700} gutterBottom color="text.primary">
-          Projects
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 5 }}>
-          대표 프로젝트를 소개합니다.
-        </Typography>
+    <section className="bg-base-200 py-20 px-4 md:px-8">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-4xl font-bold mb-2">
+          <span className="bg-gradient-to-r from-[#D4C5A9] to-[#6AA8D4] bg-clip-text text-transparent">
+            Projects
+          </span>
+        </h2>
+        <p className="text-base-content/50 mb-10">대표 프로젝트를 소개합니다.</p>
 
-        <Grid container spacing={3} sx={{ mb: 5 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
           {loading
             ? Array.from({ length: 3 }).map((_, i) => (
-                <Grid item xs={12} sm={6} md={4} key={i}>
-                  <Card sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
-                    <Skeleton variant="rectangular" sx={{ paddingTop: '56.25%' }} />
-                    <CardContent>
-                      <Skeleton variant="text" width="60%" height={28} />
-                      <Skeleton variant="text" width="100%" />
-                      <Skeleton variant="text" width="80%" />
-                    </CardContent>
-                  </Card>
-                </Grid>
+                <div key={i} className="card bg-base-200 border border-white/10 h-[340px]">
+                  <div className="skeleton w-full h-[168px]" />
+                  <div className="card-body p-4 gap-2">
+                    <div className="skeleton h-4 w-3/5" />
+                    <div className="skeleton h-3 w-full" />
+                    <div className="skeleton h-3 w-4/5" />
+                  </div>
+                </div>
               ))
-            : featured.length === 0
-            ? (
-                <Grid item xs={12}>
-                  <Typography variant="body2" color="text.disabled" textAlign="center" sx={{ py: 4 }}>
-                    프로젝트를 준비 중입니다.
-                  </Typography>
-                </Grid>
-              )
             : featured.map((project) => (
-                <Grid item xs={12} sm={6} md={4} key={project.id} sx={{ display: 'flex' }}>
-                  <FeaturedCard project={project} />
-                </Grid>
+                <FeaturedCard key={project.id} project={project} />
               ))}
-        </Grid>
+        </div>
 
-        <Box sx={{ textAlign: 'center' }}>
-          <Button
-            variant="outlined"
-            size="large"
+        <div className="text-center">
+          <button
             onClick={() => navigate('/projects')}
-            sx={{ px: 5 }}
+            className="btn btn-outline border-white/20 text-base-content hover:bg-white/10 hover:border-white/40"
           >
             전체 보기
-          </Button>
-        </Box>
-      </Container>
-    </Box>
+          </button>
+        </div>
+      </div>
+    </section>
   );
 }
 

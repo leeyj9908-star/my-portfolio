@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { Box, Container, Divider, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import ContactInfo from './contact-info';
 import GuestbookForm from './guestbook-form';
 import GuestbookList from './guestbook-list';
@@ -9,31 +7,27 @@ function ContactSection() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   return (
-    <Box sx={{ bgcolor: 'background.default', py: { xs: 6, md: 10 } }}>
-      <Container maxWidth='lg'>
-        <Typography
-          variant='h4'
-          fontWeight={700}
-          textAlign='center'
-          gutterBottom
-          sx={{ mb: { xs: 4, md: 6 } }}
-        >
-          Contact & 방명록
-        </Typography>
+    <section id="contact" className="bg-base-100 py-20 px-4 md:px-8">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-4xl font-bold text-center mb-2">
+          <span className="bg-gradient-to-r from-[#D4C5A9] to-[#6AA8D4] bg-clip-text text-transparent">
+            Contact &amp; 방명록
+          </span>
+        </h2>
+        <div className="divider mb-10 opacity-20" />
 
-        <Grid container spacing={{ xs: 4, md: 6 }}>
-          <Grid size={{ xs: 12, md: 4 }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+          <div>
             <ContactInfo />
-          </Grid>
-
-          <Grid size={{ xs: 12, md: 8 }}>
+          </div>
+          <div className="md:col-span-2">
             <GuestbookForm onSuccess={() => setRefreshKey((k) => k + 1)} />
-            <Divider sx={{ my: 4 }} />
+            <div className="divider my-6 opacity-20" />
             <GuestbookList refreshKey={refreshKey} />
-          </Grid>
-        </Grid>
-      </Container>
-    </Box>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 

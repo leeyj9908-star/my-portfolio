@@ -1,10 +1,9 @@
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const menus = [
-  { label: 'Home',       path: '/' },
-  { label: 'About Me',   path: '/about' },
-  { label: 'Projects',   path: '/projects' },
+  { label: 'Home', path: '/' },
+  { label: 'About Me', path: '/about' },
+  { label: 'Projects', path: '/projects' },
 ];
 
 function Navbar() {
@@ -12,29 +11,31 @@ function Navbar() {
   const location = useLocation();
 
   return (
-    <AppBar position="sticky" elevation={1}>
-      <Toolbar>
-        <Typography variant="h6" fontWeight={700} sx={{ flexGrow: 1, cursor: 'pointer' }} onClick={() => navigate('/')}>
+    <div className="navbar bg-base-100 border-b border-white/10 sticky top-0 z-50 px-4 md:px-8">
+      <div className="navbar-start">
+        <button
+          onClick={() => navigate('/')}
+          className="text-lg font-bold bg-gradient-to-r from-[#D4C5A9] to-[#6AA8D4] bg-clip-text text-transparent cursor-pointer"
+        >
           Portfolio
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          {menus.map((menu) => (
-            <Button
-              key={menu.path}
-              color="inherit"
-              onClick={() => navigate(menu.path)}
-              sx={{
-                fontWeight: location.pathname === menu.path ? 700 : 400,
-                borderBottom: location.pathname === menu.path ? '2px solid white' : '2px solid transparent',
-                borderRadius: 0,
-              }}
-            >
-              {menu.label}
-            </Button>
-          ))}
-        </Box>
-      </Toolbar>
-    </AppBar>
+        </button>
+      </div>
+      <div className="navbar-end gap-1">
+        {menus.map((menu) => (
+          <button
+            key={menu.path}
+            onClick={() => navigate(menu.path)}
+            className={`btn btn-ghost btn-sm normal-case font-medium ${
+              location.pathname === menu.path
+                ? 'border-b-2 border-secondary rounded-none text-base-content font-bold'
+                : 'text-base-content/60 hover:text-base-content'
+            }`}
+          >
+            {menu.label}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 

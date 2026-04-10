@@ -1,73 +1,47 @@
-import { Box, Typography, IconButton, Link } from '@mui/material';
-import PhoneIcon from '@mui/icons-material/Phone';
-import EmailIcon from '@mui/icons-material/Email';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import GitHubIcon from '@mui/icons-material/GitHub';
-
-/**
- * ContactInfo 컴포넌트
- * 포트폴리오 소유자의 연락처 정보와 SNS 링크를 표시합니다.
- *
- * Props: 없음
- *
- * Example usage:
- * <ContactInfo />
- */
 function ContactInfo() {
   const contacts = [
-    { icon: <PhoneIcon fontSize='small' />, label: '010-0000-0000', href: 'tel:01000000000' },
-    { icon: <EmailIcon fontSize='small' />, label: 'example@email.com', href: 'mailto:example@email.com' },
+    { icon: '📞', label: '010-0000-0000', href: 'tel:01000000000' },
+    { icon: '✉️', label: 'example@email.com', href: 'mailto:example@email.com' },
   ];
 
   const sns = [
-    { icon: <InstagramIcon />, href: 'https://instagram.com', label: 'Instagram' },
-    { icon: <LinkedInIcon />, href: 'https://linkedin.com', label: 'LinkedIn' },
-    { icon: <GitHubIcon />, href: 'https://github.com/leeyj9908-star', label: 'GitHub' },
+    { label: 'Instagram', href: 'https://instagram.com', icon: 'IG' },
+    { label: 'LinkedIn', href: 'https://linkedin.com', icon: 'in' },
+    { label: 'GitHub', href: 'https://github.com/leeyj9908-star', icon: 'GH' },
   ];
 
   return (
-    <Box>
-      <Typography variant='h5' fontWeight={700} gutterBottom>
-        Contact Me
-      </Typography>
-      <Typography variant='body2' color='text.secondary' sx={{ mb: 3 }}>
-        언제든지 연락 주세요!
-      </Typography>
+    <div>
+      <h3 className="text-xl font-bold text-base-content mb-1">Contact Me</h3>
+      <p className="text-base-content/50 text-sm mb-5">언제든지 연락 주세요!</p>
 
       {contacts.map((contact) => (
-        <Box
-          key={contact.label}
-          sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}
-        >
-          <Box sx={{ color: 'primary.main' }}>{contact.icon}</Box>
-          <Link
+        <div key={contact.label} className="flex items-center gap-3 mb-3">
+          <span className="text-primary">{contact.icon}</span>
+          <a
             href={contact.href}
-            underline='hover'
-            color='text.primary'
-            variant='body2'
+            className="text-base-content/80 text-sm hover:text-primary transition-colors"
           >
             {contact.label}
-          </Link>
-        </Box>
+          </a>
+        </div>
       ))}
 
-      <Box sx={{ display: 'flex', gap: 0.5, mt: 3 }}>
+      <div className="flex gap-2 mt-6">
         {sns.map((s) => (
-          <IconButton
+          <a
             key={s.label}
-            component='a'
             href={s.href}
-            target='_blank'
-            rel='noopener noreferrer'
+            target="_blank"
+            rel="noopener noreferrer"
             aria-label={s.label}
-            sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
+            className="btn btn-ghost btn-sm btn-circle border border-white/10 text-base-content/50 hover:text-primary hover:border-primary/40 text-xs"
           >
             {s.icon}
-          </IconButton>
+          </a>
         ))}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 }
 
