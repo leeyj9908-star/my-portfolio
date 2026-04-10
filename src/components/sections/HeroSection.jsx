@@ -1,96 +1,139 @@
-import { useRef, useLayoutEffect, useState } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { useRef, useLayoutEffect, useState, useEffect } from 'react';
+import { motion, useAnimation, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import StatefulButton from '../StatefulButton';
 
-/**
- * PointerHighlight — Aceternity pointer-highlight-demo 스타일
- * 박스 테두리가 무한 반복으로 자동 트레이스되는 컴포넌트
- */
-function PointerHighlight({ children }) {
-  const ref = useRef(null);
-  const [{ w, h }, setSize] = useState({ w: 0, h: 0 });
-
-  useLayoutEffect(() => {
-    if (!ref.current) return;
-    const update = () => {
-      const r = ref.current.getBoundingClientRect();
-      setSize({ w: Math.round(r.width), h: Math.round(r.height) });
-    };
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(ref.current);
-    return () => ro.disconnect();
-  }, []);
-
-  const perim = w && h ? 2 * (w + h) : 0;
-  const dash = perim * 0.22; // 트레이서 길이 = 전체 둘레의 22%
-
+/** 마우스 커서 SVG */
+function CursorIcon() {
   return (
-    <span
-      ref={ref}
-      className="relative inline-block px-6 py-3 cursor-default select-none"
-    >
-      {/* 내부 배경 글로우 (breathing) */}
-      <motion.span
-        aria-hidden
-        className="absolute inset-0 rounded-xl pointer-events-none"
-        style={{ background: 'rgba(106,168,212,0.07)' }}
-        animate={{ opacity: [0.4, 1, 0.4] }}
-        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+    <svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M1 1L7 18L10 11L17 8.5L1 1Z"
+        fill="white"
+        stroke="rgba(0,0,0,0.55)"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
       />
-
-      {/* SVG 테두리 트레이서 */}
-      {perim > 0 && (
-        <svg
-          aria-hidden
-          className="absolute pointer-events-none"
-          style={{ top: 0, left: 0, width: w, height: h, overflow: 'visible' }}
-          viewBox={`0 0 ${w} ${h}`}
-          fill="none"
-        >
-          {/* 고정 테두리 (연한 기본) */}
-          <rect
-            x="1" y="1" width={w - 2} height={h - 2} rx="10"
-            stroke="rgba(106,168,212,0.2)" strokeWidth="1.5"
-          />
-          {/* 무한 트레이싱 대시 */}
-          <motion.rect
-            x="1" y="1" width={w - 2} height={h - 2} rx="10"
-            stroke="#6AA8D4"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeDasharray={`${dash} ${perim - dash}`}
-            animate={{ strokeDashoffset: [0, -perim] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-          />
-        </svg>
-      )}
-
-      {/* 코너 도트 (순차 펄스) */}
-      {[
-        { top: -4, left: -4 },
-        { top: -4, right: -4 },
-        { bottom: -4, left: -4 },
-        { bottom: -4, right: -4 },
-      ].map((style, i) => (
-        <motion.span
-          key={i}
-          aria-hidden
-          className="absolute w-2 h-2 rounded-full bg-[#6AA8D4]"
-          style={style}
-          animate={{ opacity: [0.2, 1, 0.2], scale: [0.6, 1.4, 0.6] }}
-          transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.6, ease: 'easeInOut' }}
-        />
-      ))}
-
-      <span className="relative z-10">{children}</span>
-    </span>
+    </svg>
   );
 }
 
 /**
- * 섹션 전체 스포트라이트 (배경 마우스 추적)
+ * MouseSelectHighlight
+ * 마우스 커서가 날아와 텍스트를 드래그 선택하는 무한 반복 애니메이션
  */
+function MouseSelectHighlight({ children }) {
+  const containerRef = useRef(null);
+  const [cw, setCw] = useState(0);          // container width (px)
+  const cursorCtrl = useAnimation();
+  const selectCtrl = useAnimation();
+  const alive = useRef(true);
+
+  /* 컨테이너 너비 측정 */
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (containerRef.current) {
+        setCw(containerRef.current.getBoundingClientRect().width);
+      }
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  /* 애니메이션 시퀀스 */
+  useEffect(() => {
+    if (!cw) return;
+    alive.current = true;
+
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+    const run = async () => {
+      while (alive.current) {
+        /* ① 초기화 - 커서는 오른쪽 상단 밖에서 투명하게 */
+        cursorCtrl.set({ x: cw * 0.7, y: -30, opacity: 0, scale: 1 });
+        selectCtrl.set({ scaleX: 0, opacity: 0 });
+
+        /* ② 커서 등장 */
+        await cursorCtrl.start({ opacity: 1, transition: { duration: 0.25 } });
+        if (!alive.current) break;
+
+        /* ③ 이름 왼쪽 끝으로 이동 */
+        await cursorCtrl.start({
+          x: 0,
+          y: 8,
+          transition: { duration: 0.75, ease: [0.25, 0.46, 0.45, 0.94] },
+        });
+        if (!alive.current) break;
+
+        /* ④ 클릭 느낌 (눌림) */
+        await cursorCtrl.start({ scale: 0.8, transition: { duration: 0.1 } });
+        await cursorCtrl.start({ scale: 1, transition: { duration: 0.08 } });
+        if (!alive.current) break;
+
+        /* ⑤ 드래그: 커서 오른쪽 끝으로 + 셀렉션 펼쳐짐 */
+        await Promise.all([
+          cursorCtrl.start({
+            x: cw,
+            y: 8,
+            transition: { duration: 0.85, ease: 'easeOut' },
+          }),
+          selectCtrl.start({
+            scaleX: 1,
+            opacity: 1,
+            transition: { duration: 0.85, ease: 'easeOut' },
+          }),
+        ]);
+        if (!alive.current) break;
+
+        /* ⑥ 잠시 유지 */
+        await sleep(850);
+        if (!alive.current) break;
+
+        /* ⑦ 커서 위로 빠짐 + 셀렉션 페이드아웃 */
+        await Promise.all([
+          cursorCtrl.start({ y: -35, opacity: 0, transition: { duration: 0.4, ease: 'easeIn' } }),
+          selectCtrl.start({ opacity: 0, transition: { duration: 0.35 } }),
+        ]);
+        if (!alive.current) break;
+
+        /* ⑧ 다음 루프 전 대기 */
+        await sleep(700);
+      }
+    };
+
+    run();
+    return () => { alive.current = false; };
+  }, [cw, cursorCtrl, selectCtrl]);
+
+  return (
+    <span
+      ref={containerRef}
+      className="relative inline-block cursor-default select-none"
+    >
+      {/* 텍스트 셀렉션 하이라이트 (왼→오 확장) */}
+      <motion.span
+        aria-hidden
+        className="absolute inset-y-0 left-0 right-0 rounded-sm bg-[#6AA8D4]/30 pointer-events-none z-10"
+        animate={selectCtrl}
+        style={{ originX: 0 }}
+      />
+
+      {/* 마우스 커서 */}
+      <motion.span
+        aria-hidden
+        className="absolute top-0 left-0 pointer-events-none z-30 drop-shadow-sm"
+        animate={cursorCtrl}
+      >
+        <CursorIcon />
+      </motion.span>
+
+      {/* 실제 텍스트 */}
+      <span className="relative z-20">{children}</span>
+    </span>
+  );
+}
+
+/** 섹션 전체 마우스 스포트라이트 */
 function SectionSpotlight({ children }) {
   const ref = useRef(null);
   const rawX = useMotionValue(-9999);
@@ -130,15 +173,15 @@ function HeroSection() {
       <section className="min-h-[calc(100vh-4rem)] bg-base-100 flex items-center justify-center px-4 md:px-8 py-16 overflow-hidden">
         <div className="max-w-3xl w-full text-center flex flex-col items-center gap-8">
           <p className="text-base-content/50 text-sm font-medium tracking-widest uppercase">
-            Frontend Developer &amp; Designer
+            Product Designer
           </p>
 
           <h1 className="text-6xl md:text-8xl font-bold leading-tight">
-            <PointerHighlight>
+            <MouseSelectHighlight>
               <span className="bg-gradient-to-r from-[#FFFFFF] to-[#6AA8D4] bg-clip-text text-transparent">
                 EUNJU LEE
               </span>
-            </PointerHighlight>
+            </MouseSelectHighlight>
           </h1>
 
           <p className="text-base-content/60 text-lg max-w-md">
