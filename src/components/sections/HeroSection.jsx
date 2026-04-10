@@ -113,7 +113,7 @@ function MouseSelectHighlight({ children }) {
       {/* 텍스트 셀렉션 테두리 박스 (왼→오 확장) */}
       <motion.span
         aria-hidden
-        className="absolute inset-y-0 left-0 right-0 rounded-sm border border-[#6AA8D4] pointer-events-none z-10"
+        className="absolute -inset-y-2 -left-3 -right-3 rounded-md border border-[#6AA8D4] pointer-events-none z-10"
         animate={selectCtrl}
         style={{ originX: 0 }}
       />
