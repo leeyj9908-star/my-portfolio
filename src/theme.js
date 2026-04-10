@@ -20,8 +20,8 @@ const theme = createTheme({
       paper: '#131313',
     },
     text: {
-      primary: '#EEEAE4',
-      secondary: '#8A8078',
+      primary: '#FFFFFF',
+      secondary: '#AAAAAA',
     },
     divider: 'rgba(255,255,255,0.08)',
   },
