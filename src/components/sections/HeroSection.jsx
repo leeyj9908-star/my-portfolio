@@ -110,10 +110,10 @@ function MouseSelectHighlight({ children }) {
       ref={containerRef}
       className="relative inline-block cursor-default select-none"
     >
-      {/* 텍스트 셀렉션 하이라이트 (왼→오 확장) */}
+      {/* 텍스트 셀렉션 테두리 박스 (왼→오 확장) */}
       <motion.span
         aria-hidden
-        className="absolute inset-y-0 left-0 right-0 rounded-sm bg-[#6AA8D4]/30 pointer-events-none z-10"
+        className="absolute inset-y-0 left-0 right-0 rounded-sm border border-[#6AA8D4] pointer-events-none z-10"
         animate={selectCtrl}
         style={{ originX: 0 }}
       />
