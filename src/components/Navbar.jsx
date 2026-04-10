@@ -25,10 +25,10 @@ function Navbar() {
           <button
             key={menu.path}
             onClick={() => navigate(menu.path)}
-            className={`btn btn-ghost btn-sm normal-case font-medium ${
+            className={`btn btn-ghost btn-sm normal-case font-medium rounded-full px-4 ${
               location.pathname === menu.path
-                ? 'border-b-2 border-secondary rounded-none text-base-content font-bold'
-                : 'text-base-content/60 hover:text-base-content'
+                ? 'bg-white/10 text-base-content font-bold'
+                : 'text-base-content/60 hover:text-base-content hover:bg-white/5'
             }`}
           >
             {menu.label}
