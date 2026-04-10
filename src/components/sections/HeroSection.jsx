@@ -1,6 +1,9 @@
 import Globe from '../Globe';
+import StatefulButton from '../StatefulButton';
 
 function HeroSection() {
+  const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+
   return (
     <section className="min-h-[calc(100vh-4rem)] bg-base-100 flex items-center px-4 md:px-8 py-16 overflow-hidden">
       <div className="max-w-7xl mx-auto w-full flex flex-col-reverse md:flex-row items-center gap-12 md:gap-8">
@@ -18,12 +21,12 @@ function HeroSection() {
             여기는 Hero 섹션입니다. 메인 비주얼, 이름, 간단 소개가 들어갈 예정입니다.
           </p>
           <div className="flex gap-3 justify-center md:justify-start flex-wrap">
-            <a href="#about" className="btn btn-primary btn-sm md:btn-md">
+            <StatefulButton onClick={() => scrollTo('about')}>
               About Me
-            </a>
-            <a href="#contact" className="btn btn-outline btn-sm md:btn-md border-white/20 text-base-content hover:bg-white/10">
+            </StatefulButton>
+            <StatefulButton onClick={() => scrollTo('contact')} className="bg-transparent text-white border border-white/20 hover:bg-white/10">
               Contact
-            </a>
+            </StatefulButton>
           </div>
         </div>
 

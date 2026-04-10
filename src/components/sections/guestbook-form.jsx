@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../../utils/supabase';
+import StatefulButton from '../StatefulButton';
 
 function GuestbookForm({ onSuccess }) {
   const [form, setForm] = useState({
@@ -10,9 +11,7 @@ function GuestbookForm({ onSuccess }) {
     contact_info: '',
     is_contact_public: true,
   });
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
 
   const handleChange = (field) => (e) => {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -22,14 +21,16 @@ function GuestbookForm({ onSuccess }) {
     setForm((prev) => ({ ...prev, [field]: e.target.checked }));
   };
 
-  const handleSubmit = async () => {
+  const validate = () => {
     if (!form.content.trim()) {
       setError('방명록 내용을 입력해주세요.');
-      return;
+      return false;
     }
-    setLoading(true);
     setError('');
+    return true;
+  };
 
+  const handleSubmitAsync = async () => {
     const { error: err } = await supabase.from('guestbook').insert([
       {
         name: form.name.trim() || null,
@@ -41,16 +42,10 @@ function GuestbookForm({ onSuccess }) {
       },
     ]);
 
-    setLoading(false);
+    if (err) throw new Error('supabase error');
 
-    if (err) {
-      setError('오류가 발생했습니다. 다시 시도해주세요.');
-    } else {
-      setSuccess(true);
-      setForm({ name: '', content: '', affiliation: '', is_affiliation_public: true, contact_info: '', is_contact_public: true });
-      setTimeout(() => setSuccess(false), 3000);
-      onSuccess?.();
-    }
+    setForm({ name: '', content: '', affiliation: '', is_affiliation_public: true, contact_info: '', is_contact_public: true });
+    onSuccess?.();
   };
 
   return (
@@ -59,9 +54,6 @@ function GuestbookForm({ onSuccess }) {
 
       {error && (
         <div className="alert alert-error mb-3 text-sm py-2">{error}</div>
-      )}
-      {success && (
-        <div className="alert alert-success mb-3 text-sm py-2">방명록이 등록되었습니다!</div>
       )}
 
       <fieldset className="fieldset mb-3">
@@ -125,14 +117,13 @@ function GuestbookForm({ onSuccess }) {
         </label>
       </div>
 
-      <button
-        className="btn btn-primary w-full"
-        onClick={handleSubmit}
-        disabled={loading}
+      <StatefulButton
+        onClickAsync={handleSubmitAsync}
+        beforeSubmit={validate}
+        className="w-full"
       >
-        {loading ? <span className="loading loading-spinner loading-sm" /> : null}
-        {loading ? '등록 중...' : '방명록 남기기'}
-      </button>
+        방명록 남기기
+      </StatefulButton>
     </div>
   );
 }
