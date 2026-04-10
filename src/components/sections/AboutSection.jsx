@@ -16,9 +16,11 @@ function AboutSection() {
         <p className="text-base-content/70 text-lg max-w-xl mx-auto mb-10">
           여기는 About Me 섹션입니다. 간단한 자기소개와 '더 알아보기' 버튼이 들어갈 예정입니다.
         </p>
-        <StatefulButton onClick={() => navigate('/about')}>
-          더 알아보기
-        </StatefulButton>
+        <div className="flex justify-center">
+          <StatefulButton onClick={() => navigate('/about')}>
+            더 알아보기
+          </StatefulButton>
+        </div>
       </div>
     </section>
   );

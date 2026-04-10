@@ -24,7 +24,7 @@ function HeroSection() {
             <StatefulButton onClick={() => scrollTo('about')}>
               About Me
             </StatefulButton>
-            <StatefulButton onClick={() => scrollTo('contact')} className="bg-transparent text-white border border-white/20 hover:bg-white/10">
+            <StatefulButton variant="outline" onClick={() => scrollTo('contact')}>
               Contact
             </StatefulButton>
           </div>

@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
  * @param {function} onClick       - 동기 클릭 핸들러 [Optional]
  * @param {function} onClickAsync  - 비동기 클릭 핸들러 (throw 시 error 상태) [Optional]
  * @param {function} beforeSubmit  - async 실행 전 유효성 검사 함수, false 반환 시 로딩 미진입 [Optional]
+ * @param {string}   variant       - 'solid'(기본, 흰색 채움) | 'outline'(테두리만) [Optional]
  * @param {string}   className     - 추가 클래스 [Optional]
  * @param {boolean}  disabled      - 비활성화 여부 [Optional]
  * @param {string}   type          - 버튼 type 속성 [Optional, 기본값: 'button']
@@ -22,6 +23,7 @@ function StatefulButton({
   onClickAsync,
   beforeSubmit,
   children,
+  variant = 'solid',
   className = '',
   disabled = false,
   type = 'button',
@@ -60,7 +62,12 @@ function StatefulButton({
       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
       whileHover={!disabled && !isCircle ? { scale: 1.03 } : {}}
       whileTap={!disabled ? { scale: 0.96 } : {}}
-      className={`relative overflow-hidden bg-white text-black font-semibold rounded-full h-11 flex items-center justify-center min-w-[2.75rem] cursor-pointer select-none ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+      className={`relative overflow-hidden font-semibold rounded-full h-11 flex items-center justify-center min-w-[2.75rem] cursor-pointer select-none transition-colors
+        ${variant === 'outline'
+          ? 'bg-transparent text-white border border-white/30 hover:bg-white/10 hover:border-white/60'
+          : 'bg-white text-black hover:bg-white/90'}
+        ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+        ${className}`}
     >
       <AnimatePresence mode="wait">
         {status === 'idle' && (

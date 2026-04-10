@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../utils/supabase';
+import StatefulButton from '../StatefulButton';
 
 const THUMB_BASE = 'https://image.thum.io/get/width/600/crop/338/';
 
@@ -122,13 +123,10 @@ function ProjectsSection() {
               ))}
         </div>
 
-        <div className="text-center">
-          <button
-            onClick={() => navigate('/projects')}
-            className="btn btn-outline border-white/20 text-base-content hover:bg-white/10 hover:border-white/40"
-          >
+        <div className="flex justify-center">
+          <StatefulButton onClick={() => navigate('/projects')}>
             전체 보기
-          </button>
+          </StatefulButton>
         </div>
       </div>
     </section>
