@@ -27,7 +27,7 @@ function Navbar() {
             onClick={() => navigate(menu.path)}
             className={`btn btn-ghost btn-sm normal-case font-medium rounded-full px-4 ${
               location.pathname === menu.path
-                ? 'bg-white/10 text-base-content font-bold'
+                ? 'bg-white/10 text-base-content font-bold border border-secondary'
                 : 'text-base-content/60 hover:text-base-content hover:bg-white/5'
             }`}
           >
