@@ -15,7 +15,7 @@ function Navbar() {
       <div className="navbar-start">
         <button
           onClick={() => navigate('/')}
-          className="text-lg font-bold bg-gradient-to-r from-[#D4C5A9] to-[#6AA8D4] bg-clip-text text-transparent cursor-pointer"
+          className="text-lg font-bold bg-gradient-to-r from-[#FFFFFF] to-[#6AA8D4] bg-clip-text text-transparent cursor-pointer"
         >
           Portfolio
         </button>

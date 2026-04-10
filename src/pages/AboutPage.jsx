@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 
 const initialData = {
   basicInfo: {
-    name: '이은주',
+    name: 'EUNJU LEE',
     education: 'School of Visual Arts',
     major: '디자인전공',
     experience: '신입',
@@ -108,11 +108,11 @@ function AboutPage() {
         {/* Title */}
         <div className="text-center mb-10">
           <h1 className="text-4xl font-bold mb-3">
-            <span className="bg-gradient-to-r from-[#D4C5A9] to-[#6AA8D4] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#FFFFFF] to-[#6AA8D4] bg-clip-text text-transparent">
               About Me
             </span>
           </h1>
-          <div className="w-16 h-0.5 bg-gradient-to-r from-[#D4C5A9] to-[#6AA8D4] mx-auto rounded-full" />
+          <div className="w-16 h-0.5 bg-gradient-to-r from-[#FFFFFF] to-[#6AA8D4] mx-auto rounded-full" />
         </div>
 
         {/* Basic Info Card */}

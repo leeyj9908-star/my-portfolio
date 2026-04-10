@@ -7,7 +7,7 @@ function AboutSection() {
     <section id="about" className="bg-base-200 py-20 px-4 md:px-8">
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="text-4xl font-bold mb-3">
-          <span className="bg-gradient-to-r from-[#D4C5A9] to-[#6AA8D4] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[#FFFFFF] to-[#6AA8D4] bg-clip-text text-transparent">
             About Me
           </span>
         </h2>

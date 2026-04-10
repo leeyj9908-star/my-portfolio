@@ -10,8 +10,8 @@ function HeroSection() {
             Frontend Developer &amp; Designer
           </p>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-[#D4C5A9] to-[#6AA8D4] bg-clip-text text-transparent">
-              이은주
+            <span className="bg-gradient-to-r from-[#FFFFFF] to-[#6AA8D4] bg-clip-text text-transparent">
+              EUNJU LEE
             </span>
           </h1>
           <p className="text-base-content/60 text-lg max-w-md mx-auto md:mx-0 mb-8">

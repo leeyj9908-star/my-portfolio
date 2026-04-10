@@ -10,7 +10,7 @@ function ContactSection() {
     <section id="contact" className="bg-base-100 py-20 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-4xl font-bold text-center mb-2">
-          <span className="bg-gradient-to-r from-[#D4C5A9] to-[#6AA8D4] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[#FFFFFF] to-[#6AA8D4] bg-clip-text text-transparent">
             Contact &amp; 방명록
           </span>
         </h2>
