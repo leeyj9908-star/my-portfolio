@@ -1,7 +1,47 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { supabase } from '../../utils/supabase';
 import StatefulButton from '../StatefulButton';
+
+/**
+ * AutoHighlightText — 뷰포트 진입 시 자동으로 좌→우 하이라이트 스윕 + 무한 shimmer
+ */
+function AutoHighlightText({ children }) {
+  return (
+    <span className="relative inline-block">
+      {/* 뷰포트 진입 시 언더라인 스윕 (한 번) */}
+      <motion.span
+        aria-hidden
+        className="absolute bottom-0 left-0 h-[3px] rounded-full"
+        style={{ background: 'linear-gradient(90deg, #ffffff, #6AA8D4)' }}
+        initial={{ width: '0%' }}
+        whileInView={{ width: '100%' }}
+        viewport={{ once: true, amount: 0.8 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      />
+      {/* 무한 shimmer */}
+      <motion.span
+        aria-hidden
+        className="absolute bottom-0 left-0 h-[3px] w-1/3 rounded-full"
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)' }}
+        animate={{ x: ['-100%', '400%'] }}
+        transition={{ duration: 2.2, repeat: Infinity, repeatDelay: 1.5, ease: 'easeInOut' }}
+      />
+      {/* 텍스트 배경 글로우 (뷰포트 진입 시) */}
+      <motion.span
+        aria-hidden
+        className="absolute -inset-x-2 -inset-y-1 rounded-lg pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at 50% 100%, rgba(106,168,212,0.18), transparent 70%)' }}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, amount: 0.8 }}
+        transition={{ duration: 0.8, delay: 0.4 }}
+      />
+      <span className="relative z-10">{children}</span>
+    </span>
+  );
+}
 
 const THUMB_BASE = 'https://image.thum.io/get/width/600/crop/338/';
 
@@ -99,12 +139,16 @@ function ProjectsSection() {
   return (
     <section className="bg-base-200 py-20 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl font-bold mb-2">
-          <span className="bg-gradient-to-r from-[#FFFFFF] to-[#6AA8D4] bg-clip-text text-transparent">
-            Projects
-          </span>
-        </h2>
-        <p className="text-base-content/50 mb-10">대표 프로젝트를 소개합니다.</p>
+        <div className="text-center mb-10">
+          <h2 className="text-4xl font-bold mb-3">
+            <AutoHighlightText>
+              <span className="bg-gradient-to-r from-[#FFFFFF] to-[#6AA8D4] bg-clip-text text-transparent">
+                Projects
+              </span>
+            </AutoHighlightText>
+          </h2>
+          <p className="text-base-content/50">대표 프로젝트를 소개합니다.</p>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-10">
           {loading
