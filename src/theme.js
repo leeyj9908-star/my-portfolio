@@ -1,25 +1,29 @@
 import { createTheme } from '@mui/material/styles';
 
+export const GRADIENT = 'linear-gradient(135deg, #D4C5A9 0%, #6AA8D4 100%)';
+
 const theme = createTheme({
   palette: {
+    mode: 'dark',
     primary: {
-      main: '#8B7355',
-      light: '#A89070',
-      dark: '#6B5840',
+      main: '#C9B99A',
+      light: '#DDD0BA',
+      dark: '#A89070',
     },
     secondary: {
-      main: '#C4A882',
-      light: '#D4BFA0',
-      dark: '#A08060',
+      main: '#5B9BC8',
+      light: '#7AB3D9',
+      dark: '#3F7AAD',
     },
     background: {
-      default: '#FAF7F2',
-      paper: '#FFFDF9',
+      default: '#0A0A0A',
+      paper: '#131313',
     },
     text: {
-      primary: '#2C2416',
-      secondary: '#7A6A55',
+      primary: '#EEEAE4',
+      secondary: '#8A8078',
     },
+    divider: 'rgba(255,255,255,0.08)',
   },
   typography: {
     fontFamily: '"Pretendard", "Roboto", "Helvetica", "Arial", sans-serif',
@@ -36,6 +40,28 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: { textTransform: 'none', fontWeight: 600 },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#0A0A0A',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#131313',
+        },
+      },
+    },
+    MuiAccordion: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#131313',
+        },
       },
     },
   },

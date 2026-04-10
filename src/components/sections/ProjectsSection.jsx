@@ -63,7 +63,7 @@ function FeaturedCard({ project }) {
         overflow: 'hidden',
         transition: 'box-shadow 0.25s ease, transform 0.25s ease',
         '&:hover': {
-          boxShadow: '0 8px 32px rgba(139,115,85,0.2)',
+          boxShadow: '0 8px 32px rgba(106,168,212,0.2)',
           transform: 'translateY(-4px)',
         },
       }}

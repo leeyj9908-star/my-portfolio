@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { GRADIENT } from '../theme';
 import {
   Box,
   Container,
@@ -11,7 +12,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Divider,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HomeIcon from '@mui/icons-material/Home';
@@ -282,12 +282,12 @@ function AboutPage() {
           <Typography variant='h3' fontWeight={700} color='primary' gutterBottom>
             About Me
           </Typography>
-          <Divider
+          <Box
             sx={{
               width: 60,
+              height: 3,
               mx: 'auto',
-              borderWidth: 2,
-              borderColor: 'primary.main',
+              background: GRADIENT,
               borderRadius: 1,
             }}
           />
