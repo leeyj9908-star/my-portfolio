@@ -1,64 +1,88 @@
-import { useRef, useState } from 'react';
+import { useRef, useLayoutEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import StatefulButton from '../StatefulButton';
 
 /**
- * PointerHighlightText — Aceternity pointer-highlight-demo 스타일
- * 커서 위치에 반응하는 마커형 텍스트 하이라이트 효과
+ * PointerHighlight — Aceternity pointer-highlight-demo 스타일
+ * 박스 테두리가 무한 반복으로 자동 트레이스되는 컴포넌트
  */
-function PointerHighlightText({ children }) {
+function PointerHighlight({ children }) {
   const ref = useRef(null);
-  const [hovered, setHovered] = useState(false);
+  const [{ w, h }, setSize] = useState({ w: 0, h: 0 });
 
-  const rawX = useMotionValue(0.5); // 0~1 normalized
-  const x = useSpring(rawX, { stiffness: 400, damping: 40 });
+  useLayoutEffect(() => {
+    if (!ref.current) return;
+    const update = () => {
+      const r = ref.current.getBoundingClientRect();
+      setSize({ w: Math.round(r.width), h: Math.round(r.height) });
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(ref.current);
+    return () => ro.disconnect();
+  }, []);
 
-  /* 커서 X 위치에 따라 하이라이트 중심이 이동 */
-  const highlightBg = useTransform(
-    x,
-    (v) =>
-      `radial-gradient(180px 60px at ${v * 100}% 90%, rgba(106,168,212,0.35) 0%, rgba(106,168,212,0.08) 60%, transparent 100%)`,
-  );
-
-  const handleMouseMove = (e) => {
-    const rect = ref.current?.getBoundingClientRect();
-    if (!rect) return;
-    rawX.set((e.clientX - rect.left) / rect.width);
-  };
+  const perim = w && h ? 2 * (w + h) : 0;
+  const dash = perim * 0.22; // 트레이서 길이 = 전체 둘레의 22%
 
   return (
     <span
       ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => {
-        setHovered(false);
-        rawX.set(0.5);
-      }}
-      className="relative inline-block cursor-default select-none"
+      className="relative inline-block px-6 py-3 cursor-default select-none"
     >
-      {/* 포인터 하이라이트 오버레이 */}
+      {/* 내부 배경 글로우 (breathing) */}
       <motion.span
         aria-hidden
-        className="absolute inset-x-0 -inset-y-2 rounded-xl pointer-events-none z-0"
-        style={{ background: highlightBg }}
-        animate={{ opacity: hovered ? 1 : 0 }}
-        transition={{ duration: 0.2 }}
+        className="absolute inset-0 rounded-xl pointer-events-none"
+        style={{ background: 'rgba(106,168,212,0.07)' }}
+        animate={{ opacity: [0.4, 1, 0.4] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* 로드 시 왼→오 스윕 언더라인 */}
-      <motion.span
-        aria-hidden
-        className="absolute bottom-1 left-0 h-[3px] rounded-full pointer-events-none z-0"
-        style={{
-          background: 'linear-gradient(90deg, rgba(255,255,255,0.9), rgba(106,168,212,0.9))',
-        }}
-        initial={{ width: '0%' }}
-        animate={{ width: hovered ? '100%' : '0%' }}
-        transition={{ duration: 0.35, ease: 'easeOut' }}
-      />
+      {/* SVG 테두리 트레이서 */}
+      {perim > 0 && (
+        <svg
+          aria-hidden
+          className="absolute pointer-events-none"
+          style={{ top: 0, left: 0, width: w, height: h, overflow: 'visible' }}
+          viewBox={`0 0 ${w} ${h}`}
+          fill="none"
+        >
+          {/* 고정 테두리 (연한 기본) */}
+          <rect
+            x="1" y="1" width={w - 2} height={h - 2} rx="10"
+            stroke="rgba(106,168,212,0.2)" strokeWidth="1.5"
+          />
+          {/* 무한 트레이싱 대시 */}
+          <motion.rect
+            x="1" y="1" width={w - 2} height={h - 2} rx="10"
+            stroke="#6AA8D4"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeDasharray={`${dash} ${perim - dash}`}
+            animate={{ strokeDashoffset: [0, -perim] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+          />
+        </svg>
+      )}
 
-      {/* 실제 텍스트 */}
+      {/* 코너 도트 (순차 펄스) */}
+      {[
+        { top: -4, left: -4 },
+        { top: -4, right: -4 },
+        { bottom: -4, left: -4 },
+        { bottom: -4, right: -4 },
+      ].map((style, i) => (
+        <motion.span
+          key={i}
+          aria-hidden
+          className="absolute w-2 h-2 rounded-full bg-[#6AA8D4]"
+          style={style}
+          animate={{ opacity: [0.2, 1, 0.2], scale: [0.6, 1.4, 0.6] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.6, ease: 'easeInOut' }}
+        />
+      ))}
+
       <span className="relative z-10">{children}</span>
     </span>
   );
@@ -110,11 +134,11 @@ function HeroSection() {
           </p>
 
           <h1 className="text-6xl md:text-8xl font-bold leading-tight">
-            <PointerHighlightText>
+            <PointerHighlight>
               <span className="bg-gradient-to-r from-[#FFFFFF] to-[#6AA8D4] bg-clip-text text-transparent">
                 EUNJU LEE
               </span>
-            </PointerHighlightText>
+            </PointerHighlight>
           </h1>
 
           <p className="text-base-content/60 text-lg max-w-md">
